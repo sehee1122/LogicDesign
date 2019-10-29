@@ -12,9 +12,9 @@
 : NCO(Numerical Controlled Oscillator) 입력 바꿔서 4초 간격으로 증가하는 코드 테스트
 ### **FPGA 동작 사진 (3개- 일반, Q1, Q2)**
 `Please fill up your source`
-![](https://github.com/sehee1122/LogicDesign/commit/6440a48f6cb33bfb7474b3e8bc49e0f028bbac28#diff-1d5e1f921372e63591d33a69fc45466f)
-![](https://github.com/sehee1122/LogicDesign/commit/6440a48f6cb33bfb7474b3e8bc49e0f028bbac28#diff-68b430cd5fb93bc06a9516667130f03f)
-![](https://github.com/sehee1122/LogicDesign/commit/6440a48f6cb33bfb7474b3e8bc49e0f028bbac28#diff-a451f2cdcb89606af1b86bccc34a65af)
+![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/fig/08-1_7-Segment%20Display%20Decoder.%20Wave%20(19-10-29).png)
+![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/fig/08-2_7-Segment%20Display%20Decoder.%20Wave%20(19-10-29).png)
+![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/fig/08-3_7-Segment%20Display%20Decoder.%20Wave%20(19-10-29).png)
 
 //
 
