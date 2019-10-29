@@ -16,19 +16,16 @@ module		tb_top_nco_cnt_disp	;
 // instances
 // ----------
 
-led_disp	u_led_disp(
-		.o_seg		( seg		),
-		.o_seg_dp	( seg_dp	),
-		.o_seg_enb	( seg_enb	),
-		.i_six_digit_seg( six_digit_seg	),
-		.i_six_dp	( 6'd0		),
-		.clk		( clk		),
-		.rst_n		( rst_n		));
+top_nco_cnt_disp	dut(	.o_seg_enb	( seg_enb	),
+				.o_seg_dp	( seg_dp	),
+				.o_seg		( seg		),
+				.clk		( clk		),
+				.rst_n		( rst_n		));
 
 initial begin
 #(0*tCK)	rst_n = 1'b0;
 #(1*tCK)	rst_n = 1'b1;
-#(100000*tCK)	$finish;
+#(10000000*tCK)	$finish;
 end
 
 endmodule

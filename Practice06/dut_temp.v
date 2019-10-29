@@ -251,7 +251,7 @@ wire	[5:0]	nco_cnt		;
 
 nco_cnt		u_nco_cnt(
 		.o_nco_cnt	( nco_cnt	),
-		.i_nco_num	( 32'd50000000	),
+		.i_nco_num	( 32'd500000	),
 		.clk		( clk		),
 		.rst_n		( rst_n		));
 
@@ -266,11 +266,11 @@ double_fig_sep	u_double_fig_sep(
 wire	[6:0]	seg_left	;
 wire	[6:0]	seg_right	;
 
-fnd_dec		u0_fnd_dec(
+fnd_dec		u0_fnd_left(
 		.o_seg		( seg_left	),
 		.i_num		( left		));
 
-fnd_dec		u1_fnd_dec(
+fnd_dec		u1_fnd_right(
 		.o_seg		( seg_right	),
 		.i_num		( right		));
 
