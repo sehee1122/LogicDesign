@@ -172,7 +172,7 @@ input		rst_n			;
 wire		gen_clk		;
 
 nco	u_nco(	.o_gen_clk	( gen_clk		),
-		.i_nco_num	( 32'd50000		),
+		.i_nco_num	( 32'd5000		),
 		.clk		( clk			),
 		.rst_n		( rst_n			));
 
@@ -251,7 +251,7 @@ wire	[5:0]	nco_cnt		;
 
 nco_cnt		u_nco_cnt(
 		.o_nco_cnt	( nco_cnt	),
-		.i_nco_num	( 32'd500000	),
+		.i_nco_num	( 32'd50000000	),
 		.clk		( clk		),
 		.rst_n		( rst_n		));
 
