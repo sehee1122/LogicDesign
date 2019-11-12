@@ -40,14 +40,22 @@ assign       six_digit_seg = { 3{seg_left, seg_right} }
 
 ## 결과
 ### **Top Module 의 DUT/TestBench Code 및 Waveform 검증**
-`Please fill up your source`
 
-### **FPGA 동작 사진 (3개- 일반, Q1, Q2)**
-`Please fill up your source`
 ![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/fig/08-1_7-Segment%20Display%20Decoder.%20Wave%20(19-10-29).png)
 ![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/fig/08-2_7-Segment%20Display%20Decoder.%20Wave%20(19-10-29).png)
 ![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/fig/08-3_7-Segment%20Display%20Decoder.%20Wave%20(19-10-29).png)
 
+### **FPGA 동작 사진 (3개- 일반, Q1, Q2)**
+
+![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/figure_Lab07/FPGA.jpeg)
+![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/figure_Lab07/000053.jpeg)
+![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/figure_Lab07/G_000036.jpeg)
+![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/figure_Lab07/AAAA19.jpeg)
+![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/figure_Lab07/G_AAAA11.jpeg)
+![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/figure_Lab07/222222.jpeg)
+![](https://github.com/sehee1122/LogicDesign/blob/master/Practice06/figure_Lab07/G_090909.jpeg)
+
+`Please fill up your source`
 //
 
 # Welcome to StackEdit!
