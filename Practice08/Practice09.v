@@ -501,7 +501,7 @@ fnd_dec		u3_fnd_dec(
 		.i_num		( min_right	));
 
 wire	[41:0]	six_diget_seg	;
-assign		six_diget_seg = { {2{7'b0000000}}, sec_left_seg, sec_right_seg, min_left_seg, min_right_seg };
+assign		six_diget_seg = { {2{7'b0000000}}, min_left_seg, min_right_seg, sec_left_seg, sec_right_seg };
 
 led_disp	u_led_disp(
 		.o_seg		( o_seg		),
