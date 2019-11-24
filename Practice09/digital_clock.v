@@ -19,6 +19,7 @@
 //	Numerical Controlled Oscillator
 //	Hz of o_gen_clk = Clock Hz / num
 //	--------------------------------------------------
+
 module	nco(	
 		o_gen_clk,
 		i_nco_num,
@@ -709,11 +710,12 @@ output	[1:0]	led		;
 
 input		clk		;
 
-reg		led_data	;
+reg		led_data = 1'b1	;
 reg	[32:0]	counter		;
 reg		led_state	;
 
-assign		led = led_state	;
+assign		led[0] = led_state	;
+assign		led[1] = led_data	;
 
 always @ (posedge clk) begin
 	counter <= counter + 1;
