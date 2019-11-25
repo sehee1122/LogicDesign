@@ -20,6 +20,8 @@
 //	Hz of o_gen_clk = Clock Hz / num
 //	--------------------------------------------------
 
+`timescale	1 ms / 1 ms
+
 module	nco(	
 		o_gen_clk,
 		i_nco_num,
@@ -111,16 +113,21 @@ module	led_disp(
 		o_seg_dp,
 		o_seg_enb,
 		i_six_digit_seg,
-		i_six_dp,
+//		i_six_dp,
+		i_mode_enb,
+		i_position_enb,
 		clk,
 		rst_n		);
+//		i_alarm_enb
 
 output	[5:0]	o_seg_enb	;
 output		o_seg_dp	;
 output	[6:0]	o_seg		;
 	
 input	[41:0]	i_six_digit_seg	;
-input	[5:0]	i_six_dp	;
+//input	[5:0]	i_six_dp	;
+input		i_mode_enb	;
+input		i_position_enb	;
 input		clk		;
 input		rst_n		;
 
@@ -148,35 +155,100 @@ always @(posedge gen_clk or negedge rst_n) begin
 end
 
 reg	[5:0]	o_seg_enb	;
+reg		en		;
+
+initial begin 
+	en = 0;
+end
 
 always @(cnt_common_node) begin
-	case (cnt_common_node)
-		4'd0:	o_seg_enb = 6'b111110;
-		4'd1:	o_seg_enb = 6'b111101;
-		4'd2:	o_seg_enb = 6'b111011;
-		4'd3:	o_seg_enb = 6'b110111;
-		4'd4:	o_seg_enb = 6'b101111;
-		4'd5:	o_seg_enb = 6'b011111;
-		default:o_seg_enb = 6'b111111;
-	endcase
+	if ( i_mode_enb == 2'b00 ) begin
+		case ( cnt_common_node )
+			4'd0:	o_seg_enb = 6'b111110;
+			4'd1:	o_seg_enb = 6'b111101;
+			4'd2:	o_seg_enb = 6'b111011;
+			4'd3:	o_seg_enb = 6'b110111;
+			4'd4:	o_seg_enb = 6'b101111;
+			4'd5:	o_seg_enb = 6'b011111;
+			default:o_seg_enb = 6'b111111;
+		endcase
+	end
+
+	else if ( i_mode_enb == 2'b01 || i_mode_enb == 2'b10 ) begin
+		if ( en == 0 ) begin
+			case ( i_position_enb )
+				2'b00:	o_seg_enb = 6'b111100;
+				2'b01:	o_seg_enb = 6'b110011;
+				2'b10:	o_seg_enb = 6'b001111;
+				default:o_seg_enb = 6'b111111;
+			endcase
+		# 10	en = 1;
+		end
+		
+		else begin
+			o_seg_enb = 6'b111111;
+		# 10	en = 0;
+		end
+	end
 end
 
 reg		o_seg_dp	;
 
 always @(cnt_common_node) begin
 	case (cnt_common_node)
-		4'd0:	o_seg_dp = i_six_dp[0];
+/*		4'd0:	o_seg_dp = i_six_dp[0];
 		4'd1:	o_seg_dp = i_six_dp[1];
 		4'd2:	o_seg_dp = i_six_dp[2];
 		4'd3:	o_seg_dp = i_six_dp[3];
 		4'd4:	o_seg_dp = i_six_dp[4];
 		4'd5:	o_seg_dp = i_six_dp[5];
 		default:o_seg_dp = 1'b0;
+*/
+		     4'd0:	o_seg_dp = 1'b0;
+		     4'd1:	o_seg_dp = 1'b0;
+		     4'd2:	o_seg_dp = 1'b0;
+		     4'd3:	o_seg_dp = 1'b0;
+		     4'd4:	o_seg_dp = 1'b0;
+		     4'd5:	o_seg_dp = 1'b0; 
 	endcase
 end
 
 reg	[6:0]	o_seg		;
+//reg	[6:0]	temp		;
 
+/*
+module blinking(
+		clk,
+		o_seg_enb,
+		led,
+		seg_enb		);
+
+output	[1:0]	led		;
+output	[5:0]	seg_enb		;
+
+input		clk		;
+input	[5:0]	o_seg_enb	;
+
+
+
+reg		led_data = 1'b1	;
+reg	[32:0]	counter		;
+reg		led_state	;
+
+assign		led[0] = led_state	;
+assign		led[1] = led_data	;
+
+always @ (posedge clk) begin
+	counter <= counter + 1;
+	led_state <= counter[26];	// Changes when MSB(Most Significant Bit) changes
+
+	if( i_mode == 2'b01 ) begin
+		case ( i_position )
+		end
+
+endmodule
+*/
+		
 always @(cnt_common_node) begin
 	case (cnt_common_node)
 		4'd0:	o_seg = i_six_digit_seg[6:0];
@@ -187,6 +259,28 @@ always @(cnt_common_node) begin
 		4'd5:	o_seg = i_six_digit_seg[41:35];
 		default:o_seg = 7'b111_1110; // 0 display
 	endcase
+
+/*	if ( i_mode_enb == 2'b01 || i_mode_enb == 2'b10 ) begin
+		temp = o_seg	;
+
+		case ( i_position_enb )
+			2'b00:	i_six_digit_seg = 6'000011;
+			2'b01:	i_six_digit_seg = 6'001100;
+			2'b10:	i_six_digit_seg = 6'110000;
+			default:i_six_digit_seg = 6'000000;
+
+			2'b00:	i_six_digit_seg[13:0] = 1'b1;
+			2'b01:	i_six_digit_seg[27:14] = 1'b1;
+			2'b10:	i_six_digit_seg[41:28] = 1'b1;
+			default:i_six_digit_seg = 1'b0;
+
+			2'b00:	o_seg = 42'b000000000000000000000000000011111111111111;
+			2'b01:	o_seg = 42'b000000000000001111111111111100000000000000;
+			2'b10:	o_seg = 42'b111111111111110000000000000000000000000000;
+			default:o_seg = 42'b000000000000000000000000000000000000000000;
+		endcase
+	end
+*/
 end
 
 endmodule
@@ -702,13 +796,20 @@ endmodule
 //	Blink mode
 //	--------------------------------------------------
 
+/*
 module blinking(
 		clk,
-		led		);
+		o_seg_enb,
+		led,
+		seg_enb		);
 
 output	[1:0]	led		;
+output	[5:0]	seg_enb		;
 
 input		clk		;
+input	[5:0]	o_seg_enb	;
+
+
 
 reg		led_data = 1'b1	;
 reg	[32:0]	counter		;
@@ -720,10 +821,13 @@ assign		led[1] = led_data	;
 always @ (posedge clk) begin
 	counter <= counter + 1;
 	led_state <= counter[26];	// Changes when MSB(Most Significant Bit) changes
-	end
+
+	if( i_mode == 2'b01 ) begin
+		case ( i_position )
+		end
 
 endmodule
-
+*/
 
 //	----------	----------	----------	//
 
@@ -845,8 +949,8 @@ wire	[6:0]	sec_left_seg	;
 wire	[6:0]	sec_right_seg	;
 wire	[6:0]	min_left_seg	;
 wire	[6:0]	min_right_seg	;
-wire	[5:0]	hou_left_seg	;
-wire	[5:0]	hou_right_seg	;
+wire	[6:0]	hou_left_seg	;
+wire	[6:0]	hou_right_seg	;
 
 fnd_dec		u0_fnd_dec(
 		.o_seg			( sec_left_seg	),
@@ -880,9 +984,40 @@ led_disp	u_led_disp(
 		.o_seg_dp		( o_seg_dp	),
 		.o_seg_enb		( o_seg_enb	),
 		.i_six_digit_seg	( six_digit_seg	),
-		.i_six_dp		( mode		),
+//		.i_six_dp		( mode		),
+		.i_mode_enb		( mode		),
+		.i_position_enb		( position	),
+//		.i_alarm_enb		( alarm_en	),
 		.clk			( clk		),
 		.rst_n			( rst_n		));
+
+/*
+wire	[5:0]	led_seg		;
+
+blinking	u0_blink(
+		.clk			( clk		),
+		.led			( led_seg[0]	);
+
+blinking	u1_blink(
+		.clk			( clk		),
+		.led			( led_seg[1]	);
+
+blinking	u2_blink(
+		.clk			( clk		),
+		.led			( led_seg[2]	);
+
+blinking	u3_blink(
+		.clk			( clk		),
+		.led			( led_seg[3]	);
+
+blinking	u4_blink(
+		.clk			( clk		),
+		.led			( led_seg[4]	);
+
+blinking	u5_blink(
+		.clk			( clk		),
+		.led			( led_seg[5]	);
+*/
 
 buzz		u_buzz(
 		.o_buzz			( o_alarm	),
