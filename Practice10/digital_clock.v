@@ -113,13 +113,14 @@ module	led_disp(
 		o_seg_dp,
 		o_seg_enb,
 		i_six_digit_seg,
-//		i_six_dp,
-		i_mode_enb,
+		i_six_dp,
+/*		i_mode_enb,
 		i_position_enb,
 		i_sw0,
 		i_sw1,
 		i_sw2,
 		i_sw3,
+*/
 		clk,
 		rst_n		);
 //		i_alarm_enb
@@ -129,19 +130,23 @@ output		o_seg_dp	;
 output	[6:0]	o_seg		;
 	
 input	[41:0]	i_six_digit_seg	;
-//input	[5:0]	i_six_dp	;
+input	[5:0]	i_six_dp	;
+/*
 input		i_mode_enb	;
 input		i_position_enb	;
+*/
 input		clk		;
 input		rst_n		;
+/*
 input		i_sw0		;
 input		i_sw1		;
 input		i_sw2		;
 input		i_sw3		;
+*/
 
-parameter	POS_SEC		= 2'b00	;
-parameter	POS_MIN		= 2'b01	;
-parameter 	POS_HOU  	= 2'b10	;
+//parameter	POS_SEC		= 2'b00	;
+//parameter	POS_MIN		= 2'b01	;
+//parameter POS_HOU  	= 2'b10	;
 
 wire		gen_clk		;	
 
@@ -167,8 +172,8 @@ always @(posedge gen_clk or negedge rst_n) begin
 end
 
 reg	[5:0]	o_seg_enb	;
-reg	[1:0] state			;
-reg			blink			;
+//reg	[1:0] state			;
+//reg			blink			;
 
 //initial begin 
 //en = 0;
@@ -191,23 +196,23 @@ end
 */
 
 // always for 7 - segment blink on/off
-always @( posedge clk  ) begin
+always @( cnt_common_node ) begin
 //	or negedge reset
 // if ( ~reset )
 //		blink <= 1'b1;
 //	else
 
-		case ( cnt_common_node )
-			4'd0:	o_seg_enb = 6'b111110;
-			4'd1:	o_seg_enb = 6'b111101;
-			4'd2:	o_seg_enb = 6'b111011;
-			4'd3:	o_seg_enb = 6'b110111;
-			4'd4:	o_seg_enb = 6'b101111;
-			4'd5:	o_seg_enb = 6'b011111;
-			default:o_seg_enb = 6'b111111;
-		endcase
+	case ( cnt_common_node )
+		4'd0:	o_seg_enb = 6'b111110;
+		4'd1:	o_seg_enb = 6'b111101;
+		4'd2:	o_seg_enb = 6'b111011;
+		4'd3:	o_seg_enb = 6'b110111;
+		4'd4:	o_seg_enb = 6'b101111;
+		4'd5:	o_seg_enb = 6'b011111;
+		default:o_seg_enb = 6'b111111;
+	endcase
 
-		case ( i_sw0 )
+/*		case ( i_sw0 )
 			2'b01:
 				if ( (i_mode_enb == 2'b01) || (i_mode_enb == 2'b10) )
 					if ( i_sw2 == 1'b1 ) begin
@@ -237,10 +242,12 @@ always @( posedge clk  ) begin
 					blink <= 1'b1;
 				end
 		endcase
-	end
+		*/
+end
 //end
 
 
+/*
 // always for display on/off
 always @ ( posedge clk ) begin
 	if ( (i_mode_enb == 2'b01) || (i_mode_enb == 2'b10) )
@@ -265,7 +272,7 @@ always @ ( posedge clk ) begin
 		o_seg_enb <= 6'b111111;
 	end
 end
-			
+*/	
 			
 /*				3'b100 : begin
 					POS_SEC <= ~POS_SEC	;
@@ -301,20 +308,21 @@ reg		o_seg_dp	;
 
 always @(cnt_common_node) begin
 	case (cnt_common_node)
-/*		4'd0:	o_seg_dp = i_six_dp[0];
+		4'd0:	o_seg_dp = i_six_dp[0];
 		4'd1:	o_seg_dp = i_six_dp[1];
 		4'd2:	o_seg_dp = i_six_dp[2];
 		4'd3:	o_seg_dp = i_six_dp[3];
 		4'd4:	o_seg_dp = i_six_dp[4];
 		4'd5:	o_seg_dp = i_six_dp[5];
 		default:o_seg_dp = 1'b0;
+/*
+	     4'd0:	o_seg_dp = 1'b0;
+	     4'd1:	o_seg_dp = 1'b0;
+	     4'd2:	o_seg_dp = 1'b0;
+	     4'd3:	o_seg_dp = 1'b0;
+	     4'd4:	o_seg_dp = 1'b0;
+	     4'd5:	o_seg_dp = 1'b0;
 */
-		     4'd0:	o_seg_dp = 1'b0;
-		     4'd1:	o_seg_dp = 1'b0;
-		     4'd2:	o_seg_dp = 1'b0;
-		     4'd3:	o_seg_dp = 1'b0;
-		     4'd4:	o_seg_dp = 1'b0;
-		     4'd5:	o_seg_dp = 1'b0; 
 	endcase
 end
 
@@ -469,6 +477,7 @@ module	controller(
 		o_alarm_sec_clk,
 		o_alarm_min_clk,
 		o_alarm_hou_clk,
+//		led,
 		i_max_hit_sec,
 		i_max_hit_min,
 		i_max_hit_hou,
@@ -476,11 +485,13 @@ module	controller(
 		i_sw1,
 		i_sw2,
 		i_sw3,
+//		clk_blink,
 		clk,
 		rst_n		);
 
 output	[1:0]	o_mode		;
-output		o_position	;
+output	[1:0]	o_position	;
+//output		o_position	;	// why is the o_position 1 bit
 output		o_alarm_en	;
 output		o_sec_clk	;
 output		o_min_clk	;
@@ -488,6 +499,7 @@ output		o_hou_clk	;
 output		o_alarm_sec_clk	;
 output		o_alarm_min_clk	;
 output		o_alarm_hou_clk	;
+//output	led		;
 
 input		i_max_hit_sec	;
 input		i_max_hit_min	;
@@ -498,6 +510,7 @@ input		i_sw1		;
 input		i_sw2		;
 input		i_sw3		;
 
+//input		clk_blink	;
 input		clk		;
 input		rst_n		;
 
@@ -553,7 +566,8 @@ always @(posedge sw0 or negedge rst_n) begin
 	end
 end
 
-reg [1:0]	o_position	;
+reg	[1:0]	o_position	;
+//reg 		o_position	;	// why is the o_position 1 bit
 
 always @(posedge sw1 or negedge rst_n) begin
 	if(rst_n == 1'b0) begin
@@ -584,12 +598,41 @@ nco		u1_nco(
 		.clk		( clk		),
 		.rst_n		( rst_n		));
 
+/*		
+wire		clk_2hz			;
+nco		u2_nco(
+		.o_gen_clk	( clk_2hz	),
+		.i_nco_num	( 32'd5000000	),
+		.clk		( clk		),
+		.rst_n		( rst_n		));
+*/
+
 reg		o_sec_clk		;
 reg		o_min_clk		;
 reg  		o_hou_clk  		;
 reg		o_alarm_sec_clk		;
 reg		o_alarm_min_clk		;
 reg  		o_alarm_hou_clk 	;
+
+/*
+reg	[1:0]	en1 = 2'b00;
+reg	[1:0] en2 = 2'b00;
+
+always @(posedge clk) begin
+  en2 = en1 ;
+end
+
+always @(posedge clk_2hz or negedge rst_n) begin
+  if(rst_n == 1'b0) begin
+    en1 = 2'b00;
+  end else begin
+    en2 = {en1[0],i_sw1};
+  end
+end
+*/
+
+//reg	[5:0]		led	;
+//reg	[31:0]	count	;
 
 always @(*) begin
 	case(o_mode)
@@ -605,6 +648,17 @@ always @(*) begin
 			case(o_position)
 				POS_SEC : begin
 					o_sec_clk = ~sw2;
+					/*
+					if(led == 4'hf)		// led = led | led_temp;
+						led <= 0;			// https://dkeemin.com/vivado-verilog-%EC%BD%94%EB%94%A9%ED%95%B4%EB%B3%B4%EA%B8%B0/
+						count <= count + 1;
+						if(count == 125000000) begin	// 100000000
+							count <= 0;
+							led <= led + 1;
+						end
+					end
+					*/
+//					o_sec_clk = ~o_sec_clk;
 					o_min_clk = 1'b0;
 					o_hou_clk = 1'b0;
 					o_alarm_sec_clk = 1'b0;
@@ -614,6 +668,7 @@ always @(*) begin
 				POS_MIN : begin
 					o_sec_clk = 1'b0;
 					o_min_clk = ~sw2;
+//					o_min_clk = ~o_min_clk;
 					o_hou_clk = 1'b0;
 					o_alarm_sec_clk = 1'b0;
 					o_alarm_min_clk = 1'b0;
@@ -623,6 +678,7 @@ always @(*) begin
 					o_sec_clk = 1'b0;
 					o_min_clk = 1'b0;
 					o_hou_clk = ~sw2;
+//					o_hou_clk = ~o_hou_clk;
 					o_alarm_sec_clk = 1'b0;
 					o_alarm_min_clk = 1'b0;
 					o_alarm_hou_clk = 1'b0;
@@ -637,6 +693,7 @@ always @(*) begin
 					o_min_clk = i_max_hit_sec;
 					o_hou_clk = i_max_hit_min;
 					o_alarm_sec_clk = ~sw2;
+//					o_alarm_sec_clk = ~0;
 					o_alarm_min_clk = 1'b0;
 					o_alarm_hou_clk = 1'b0;
 				end
@@ -646,6 +703,7 @@ always @(*) begin
 					o_hou_clk = i_max_hit_min;
 					o_alarm_sec_clk = 1'b0;
 					o_alarm_min_clk = ~sw2;
+//					o_alarm_min_clk = ~0;
 					o_alarm_hou_clk = 1'b0;
 				end
 				POS_HOU : begin
@@ -655,6 +713,7 @@ always @(*) begin
 					o_alarm_sec_clk = 1'b0;
 					o_alarm_min_clk = 1'b0;
 					o_alarm_hou_clk = ~sw2;
+//					o_alarm_hou_clk = ~0;
 				end
 			endcase
 		end
@@ -746,7 +805,7 @@ output  	o_max_hit_hou	;
 output		o_alarm		;
 
 input	[1:0]	i_mode		;
-input		i_position	;
+input	[1:0]	i_position	;
 input		i_sec_clk	;
 input		i_min_clk	;
 input		i_hou_clk	;
@@ -761,9 +820,9 @@ input		rst_n		;
 parameter	MODE_CLOCK	= 2'b00	;
 parameter	MODE_SETUP	= 2'b01	;
 parameter	MODE_ALARM	= 2'b10	;
-parameter	POS_SEC		= 2'd0	;	// 2'b00 //
-parameter	POS_MIN		= 2'd1	;	// 2'b01 //
-parameter	POS_HOU		= 2'd2	;	// 2'b10 // 
+parameter	POS_SEC		= 2'b00	;	// 2'd0 //
+parameter	POS_MIN		= 2'b01	;	// 2'd1 //
+parameter	POS_HOU		= 2'b10	;	// 2'd2 // 
 
 //	MODE_CLOCK
 wire	[5:0]	sec		;
@@ -817,6 +876,14 @@ hms_cnt		u_hms_cnt_alarm_hou(
 		.i_max_cnt	( 6'd23			),
 		.clk		( i_alarm_hou_clk	),
 		.rst_n		( rst_n			));
+		
+/*wire		gen_clk			;	
+nco		u_nco(
+		.o_gen_clk	( gen_clk	),
+		.i_nco_num	( 32'd5000	),
+		.clk		( clk		),
+		.rst_n		( rst_n		));
+*/
 
 reg	[5:0]	o_sec		;
 reg	[5:0]	o_min		;
@@ -827,20 +894,62 @@ always @ (*) begin
 		MODE_CLOCK:	begin
 			o_sec	= sec;
 			o_min	= min;
-			o_hou	= hou;
+			o_hou	= hou;		
 		end
 		MODE_SETUP:	begin
 			o_sec	= sec;
 			o_min	= min;
 			o_hou	= hou;
+		
+/*			case(i_mode)
+				2'b00 : begin
+					POS_SEC = ~POS_SEC;
+					POS_MIN = 2'd01;
+					POS_HOU = 2'd10;
+				end
+				2'b01 : begin
+					POS_SEC = 2'd00;
+					POS_MIN = ~POS_MIN;
+					POS_HOU = 2'd10;
+				end
+				2'b10 : begin
+					POS_SEC = 2'd00;
+					POS_MIN = 2'd01;
+					POS_HOU = ~POS_HOU;
+				end
+			endcase
+			*/
 		end
 		MODE_ALARM:	begin
 			o_sec	= alarm_sec;
 			o_min	= alarm_min;
 			o_hou	= alarm_hou;
+			
+/*			case(i_mode)
+				2'd0 : begin
+					POS_SEC = ~POS_SEC;
+					POS_MIN = 2'd01;
+					POS_HOU = 2'd10;
+				end
+				2'd1 : begin
+					POS_SEC = 2'd00;
+					POS_MIN = ~POS_MIN;
+					POS_HOU = 2'd10;
+				end
+				2'd2 : begin
+					POS_SEC = 2'd00;
+					POS_MIN = 2'd01;
+					POS_HOU = ~POS_HOU;
+				end
+			endcase
+			*/
 		end
 	endcase
 end
+
+//assign	o_max_hit_sec = POS_SEC;
+//assign	o_max_hit_min = POS_MIN;
+//assign	o_max_hit_hou = POS_HOU;
 
 reg		o_alarm		;
 always @ (posedge clk or negedge rst_n) begin
@@ -945,6 +1054,60 @@ endmodule
 //	Blink mode
 //	--------------------------------------------------
 
+module blink(
+		i_mode_enb,
+		i_position_enb,
+		i_seg_enb,
+		clk,
+		o_led_enb	);
+	
+output	[5:0]	o_led_enb	;
+
+input	[1:0]	i_mode_enb	;
+input	[1:0]	i_position_enb	;
+input	[5:0]	i_seg_enb	;
+input		clk		;
+
+reg	[31:0]	count		;
+reg	[5:0]	o_led_enb	;
+
+initial begin	count <= 0	;
+end
+
+always @ (posedge clk) begin
+	if( (i_mode_enb == 2'b01) || (i_mode_enb == 2'b10) ) begin
+		if(i_position_enb == 2'b00) begin											// i_seg_enb == 4'hf
+			o_led_enb <= { i_seg_enb[5:2], 2'b00 };
+			count <= count + 1;
+			if(count == 100000000) begin
+				count <= 0;
+				o_led_enb <= i_seg_enb;
+			end
+		end
+		
+		if(i_position_enb == 2'b01) begin
+			o_led_enb <= { i_seg_enb[5:4], 2'b00, i_seg_enb[1:0] };
+			count <= count + 1;
+			if(count == 100000000) begin
+				count <= 0;
+				o_led_enb <= i_seg_enb;
+			end
+		end
+		
+		if(i_position_enb == 2'b10) begin
+			o_led_enb <= { 2'b00, i_seg_enb[4:0] };
+			count <= count + 1;
+			if(count == 100000000) begin
+				count <= 0;
+				o_led_enb <= i_seg_enb;
+			end
+		end
+	end
+end
+endmodule
+
+// assign		led	= i_seg_enb	;
+
 /*
 module blinking(
 		clk,
@@ -952,16 +1115,14 @@ module blinking(
 		led,
 		seg_enb		);
 
-output	[1:0]	led		;
+output	[5:0]	led		;
 output	[5:0]	seg_enb		;
 
 input		clk		;
 input	[5:0]	o_seg_enb	;
 
-
-
 reg		led_data = 1'b1	;
-reg	[32:0]	counter		;
+reg	[31:0]	counter		;
 reg		led_state	;
 
 assign		led[0] = led_state	;
@@ -981,7 +1142,7 @@ endmodule
 //	----------	----------	----------	//
 
 module	digital_clock(
-		o_seg_enb,
+		o_led_enb,
 		o_seg_dp,
 		o_seg,
 		o_alarm,
@@ -992,7 +1153,7 @@ module	digital_clock(
 		clk,
 		rst_n		);
 
-output	[5:0]	o_seg_enb	;
+output	[5:0]	o_led_enb	;
 output		o_seg_dp	;
 output	[6:0]	o_seg		;
 output		o_alarm		;
@@ -1017,7 +1178,7 @@ wire		alarm_min_clk	;
 wire		alarm_hou_clk	;
 
 wire	[1:0]	mode		;
-wire		position	;
+wire	[1:0]	position	;
 
 controller	u_controller(
 		.o_mode			( mode		),
@@ -1125,49 +1286,62 @@ fnd_dec		u5_fnd_dec(
 		.o_seg			( hou_right_seg	),
 		.i_num			( hou_right	));
 
+wire	[5:0]		seg_enb		;
 wire	[41:0]	six_digit_seg	;
 assign		six_digit_seg = { hou_left_seg, hou_right_seg, min_left_seg, min_right_seg, sec_left_seg, sec_right_seg };
 
 led_disp	u_led_disp(
 		.o_seg			( o_seg		),
 		.o_seg_dp		( o_seg_dp	),
-		.o_seg_enb		( o_seg_enb	),
+		.o_seg_enb		( seg_enb	),
 		.i_six_digit_seg	( six_digit_seg	),
-//		.i_six_dp		( mode		),
-		.i_mode_enb		( mode		),
+		.i_six_dp		( mode		),
+/*		.i_mode_enb		( mode		),
 		.i_position_enb		( position	),
-//		.i_alarm_enb		( alarm_en	),
+		.i_alarm_enb		( alarm_en	),
 		.i_sw0			( i_sw0		),
 		.i_sw1			( i_sw1		),
 		.i_sw2			( i_sw2		),
 		.i_sw3			( i_sw3		),
+*/
 		.clk			( clk		),
 		.rst_n			( rst_n		));
 
-/*
-wire	[5:0]	led_seg		;
+blink	u_blink(
+		.i_mode_enb		( mode		),
+		.i_position_enb		( position	),
+		.i_seg_enb		( seg_enb	),
+		.clk			( clk		),
+		.o_led_enb		( o_led_enb	));
 
+/*
 blinking	u0_blink(
+		.i_seg_enb	( o_seg_enb[0]	),
 		.clk			( clk		),
 		.led			( led_seg[0]	);
 
 blinking	u1_blink(
+		.i_seg_enb	( o_seg_enb[1]	),
 		.clk			( clk		),
 		.led			( led_seg[1]	);
 
 blinking	u2_blink(
+		.i_seg_enb	( o_seg_enb[2]	),
 		.clk			( clk		),
 		.led			( led_seg[2]	);
 
 blinking	u3_blink(
+		.i_seg_enb	( o_seg_enb[3]	),
 		.clk			( clk		),
 		.led			( led_seg[3]	);
 
 blinking	u4_blink(
+		.i_seg_enb	( o_seg_enb[4]	),
 		.clk			( clk		),
 		.led			( led_seg[4]	);
 
 blinking	u5_blink(
+		.i_seg_enb	( o_seg_enb[5]	),
 		.clk			( clk		),
 		.led			( led_seg[5]	);
 */
