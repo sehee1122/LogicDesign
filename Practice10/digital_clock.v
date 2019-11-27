@@ -1068,42 +1068,60 @@ input	[1:0]	i_position_enb	;
 input	[5:0]	i_seg_enb	;
 input		clk		;
 
-reg	[31:0]	count		;
+reg	[5:0]	count1		;
+reg	[5:0]	count2		;
+reg	[5:0]	count3		;
 reg	[5:0]	o_led_enb	;
 
-initial begin	count <= 0	;
+/*
+initial begin	count1 <= 0	;
 end
+
+initial begin	count2 <= 0	;
+end
+
+initial begin	count3 <= 0	;
+end
+*/
 
 always @ (posedge clk) begin
 	if( (i_mode_enb == 2'b01) || (i_mode_enb == 2'b10) ) begin
-		if(i_position_enb == 2'b00) begin											// i_seg_enb == 4'hf
-			o_led_enb <= { i_seg_enb[5:2], 2'b00 };
-			count <= count + 1;
-			if(count == 100000000) begin
-				count <= 0;
-				o_led_enb <= i_seg_enb;
+		case(i_position_enb) 
+			2'b00: begin											// i_seg_enb == 4'hf
+				if( count1 <= 6'd15 ) begin
+					o_led_enb <= { i_seg_enb[5:2], 2'b00 };
+					count1 <= count1 + 1;
+				end else begin
+					o_led_enb <= i_seg_enb;
+					count1 <= count1 + 1;
+				end
 			end
-		end
 		
-		if(i_position_enb == 2'b01) begin
-			o_led_enb <= { i_seg_enb[5:4], 2'b00, i_seg_enb[1:0] };
-			count <= count + 1;
-			if(count == 100000000) begin
-				count <= 0;
-				o_led_enb <= i_seg_enb;
+			2'b01: begin
+				if( count2 <= 6'd15 ) begin
+					o_led_enb <= { i_seg_enb[5:4], 2'b00, i_seg_enb[1:0] };
+					count2 <= count2 + 1;
+				end else begin
+					o_led_enb <= i_seg_enb;
+					count2 <= count2 + 1;
+				end
 			end
-		end
 		
-		if(i_position_enb == 2'b10) begin
-			o_led_enb <= { 2'b00, i_seg_enb[4:0] };
-			count <= count + 1;
-			if(count == 100000000) begin
-				count <= 0;
-				o_led_enb <= i_seg_enb;
+			2'b10: begin
+				if( count3 <= 6'd15 ) begin
+					o_led_enb <= { 2'b00, i_seg_enb[4:0] };
+					count3 <= count3 + 1;
+				end else begin
+					o_led_enb <= i_seg_enb;
+					count3 <= count3 + 1;
+				end
 			end
-		end
+		endcase
+	end else begin
+		o_led_enb <= i_seg_enb;
 	end
 end
+
 endmodule
 
 // assign		led	= i_seg_enb	;
@@ -1353,3 +1371,4 @@ buzz		u_buzz(
 		.rst_n			( rst_n		));
 
 endmodule
+
