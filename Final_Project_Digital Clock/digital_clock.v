@@ -1292,6 +1292,193 @@ assign dp = reg_dp;
 endmodule
 */
 
+// First Screen
+module scrolling_name(
+	input clk,
+	input rst_n,
+	output a,
+	output b,
+	output c,
+	output d,
+	output e,
+	output f,
+	output g,
+	output dp,
+	output [5:0] an	);
+ 
+reg [28:0] ticker; //to hold a count of 50M
+
+wire click;
+reg [5:0] sixth, fifth, fourth, third, second, first; // registers to hold the LED values
+ 
+always @ (posedge clk or posedge rst_n) begin		//always block for the ticker
+	if(rst_n == 0)
+		ticker <= 0;
+	end else begin
+		if(ticker == 50000000) begin	 //reset after 1 second
+			ticker <= 0;
+		end else begin
+			ticker <= ticker + 1;
+		end
+	end
+end
+ 
+reg [5:0] clickcount;	//register to hold the count upto 9. That is why a 4 bit register is used. 3 bit would not have been enough.
+ 
+assign click = ((ticker == 50000000) ? 1'b1 : 1'b0);	//click every second
+ 
+always @ (posedge click or posedge rst_n) begin
+	if(rst_n)
+		clickcount <= 0;
+	end else begin
+		if(clickcount == 8) begin
+			clickcount <= 0;
+		end else begin
+			clickcount <= clickcount + 1;
+		end
+	end
+end
+ 
+always @ (*) begin		//always block that will scroll or move the text. Accomplished with case
+	case(clickcount)
+		0: begin
+			sixth = 4;	// H
+			fifth = 3;	// E
+			fourth = 7;	// L
+			third = 7;	// L
+			second = 0;	// O
+			first = 2;	// -
+		end
+
+		1: begin
+			sixth = 3;	// E
+			fifth = 7;	// L
+			fourth = 7;	// L
+			third = 0;	// O
+			second = 2;	// -
+			first = 1;	// T
+		end
+
+		2: begin
+			sixth = 7;	// L
+			fifth = 7;	// L
+			fourth = 0;	// O
+			third = 2;	// -
+			second = 1;	// T
+			first = 4;	// H
+		end
+
+		3: begin
+			sixth = 7;	// L
+			fifth = 0;	// O
+			fourth = 2;	// -
+			third = 1;	// T
+			second = 4;	// H
+			first = 3;	// E
+		end
+
+		4: begin
+			sixth = 0;	// O
+			fifth = 2;	// -
+			fourth = 1;	// T
+			third = 4;	// H
+			second = 3;	// E
+			first = 8;	// R
+		end
+
+		5: begin
+			sixth = 2;	// -
+			fifth = 1;	// T
+			fourth = 4;	// H
+			third = 3;	// E
+			second = 8;	// R
+			first = 3;	// E
+		end
+
+		6: begin
+			sixth = 1;	// T
+			fifth = 4;	// H
+			fourth = 3;	// E
+			third = 8;	// R
+			second = 3;	// E
+			first = 2;	// -
+		end
+	endcase
+end
+ 
+//see my other post on explanation of LED multiplexing.
+ 
+parameter N = 18;
+ 
+reg [N-1:0]count;
+ 
+always @ (posedge clk or posedge rst_n) begin
+	if (rst_n)
+		count <= 0;
+	end else begin
+		count <= count + 1;
+	end
+end
+ 
+reg [6:0] sseg;
+reg [5:0] an_temp;
+ 
+always @ (*) begin
+	case(count[N-1:N-2])
+		3?b000 : begin
+			sseg = first;
+			an_temp = 6?b111110;
+		end
+
+		3?b001 : begin
+			sseg = second;
+			an_temp = 6?b111101;
+		end
+
+		3?b010 : begin
+			sseg = third;
+			an_temp = 6?b111011;
+		end
+
+ 		3?b011 : begin
+			sseg = fourth;
+			an_temp = 6?b110111;
+		end
+
+		3?b100 : begin
+			sseg = fifth;
+			an_temp = 6?b101111;
+		end
+
+		3?b101 : begin
+			sseg = sixth;
+			an_temp = 6?b011111;
+		end
+	endcase
+end
+
+assign an = an_temp;
+ 
+reg [6:0] sseg_temp; 
+always @ (*) begin
+  case(sseg)
+   4 : sseg_temp = 7'b0001001; //to display H
+   3 : sseg_temp = 7'b0000110; //to display E
+   7 : sseg_temp = 7'b1000111; //to display L
+   0 : sseg_temp = 7'b1000000; //to display O
+   1 : sseg_temp = 7'b0000111; //to display T
+   8 : sseg_temp = 7'b0001000; //to display R
+    
+   default : sseg_temp = 7'b1111111; //blank
+  endcase
+ end
+assign {g, f, e, d, c, b, a} = sseg_temp;
+assign dp = 1'b1;
+
+endmodule
+//
+
+
 module	digital_clock(
 		o_seg_enb,
 		o_seg_dp,
@@ -1501,6 +1688,18 @@ led_disp u_led_disp (
 			.clk(clk),
 			.rst_n(rst_n));
 
+scrolling_name u_scr_name(
+			.clk		( clk		),
+			.rst_n	( rst_n	),
+			.a,
+			.b,
+			.c,
+			.d,
+			.e,
+			.f,
+			.g,
+			.dp,
+			.an	);
 
 /*			
 stopwatch	u_sw(
