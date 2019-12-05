@@ -376,14 +376,6 @@ end
 
 endmodule
 
-/*
-hms_cnt		u_hms_cnt_sec(
-		.o_hms_cnt	( sec			),
-		.o_max_hit	( o_max_hit_sec		),
-		.i_max_cnt	( 6'd59			),
-		.clk		( i_sec_clk		),
-		.rst_n		( rst_n			));
-*/
 
 module	hms_cntdwn(
 		o_hms_cnt,
@@ -1466,40 +1458,9 @@ assign		o_buzz = buzz & (i_buzz_en || i_buzz_enz) ;
 
 endmodule
 
-
-/*
-module fnd_dec_2(
-o_seg,
-i_num);
-
-output [6:0] o_seg;
-
-input [3:0] i_num;
-reg [6:0] o_seg;
-
-always @(i_num) begin
-case(i_num)
- 4'd0:   o_seg = 7'b000_0000; 
- 4'd1:   o_seg = 7'b011_0111; 
- 4'd2:   o_seg = 7'b100_1111; 
- 4'd3:   o_seg = 7'b000_1110; 
- 4'd4:   o_seg = 7'b000_1110; 
- 4'd5:   o_seg = 7'b111_1110; 
-default:o_seg = 7'b000_0000; 
-
-WAtCH
- 4'd0:   o_seg = 7'b011_1110; 
- 4'd1:   o_seg = 7'b011_1110; 
- 4'd2:   o_seg = 7'b111_0111; 
- 4'd3:   o_seg = 7'b000_1111; 
- 4'd4:   o_seg = 7'b100_1110; 
- 4'd5:   o_seg = 7'b011_0111; 
-default:o_seg = 7'b000_0000; 
-endcase
-end
-endmodule
-*/
-
+//	--------------------------------------------------
+//	Top Module
+//	--------------------------------------------------
 module	digital_clock(
 		o_seg_enb,
 		o_seg_dp,
@@ -1562,32 +1523,6 @@ wire		stwat_msec	;
 wire	[1:0]	position	;
 wire	[2:0]	mode		;
 wire	[1:0]	world_position	;
-
-/*
-wire		start_clk	;
-nco		start_nco(
-		.o_gen_clk	( start_clk	),
-		.i_nco_num	( 32'd50000000	),
-		.clk		( clk		),
-		.rst_n		( rst_n		));
-
-reg	[3:0]	before_clk	;
-reg		find_hello	;
-
-always @(posedge start_clk or negedge rst_n) begin
-	if(rst_n == 1'b0) begin
-		before_clk <= 1'b0;
-	end else begin
-		if(before_clk < 4'd10) begin
-			before_clk <= before_clk + 1'b1 ;
-			find_hello <= 1'b0	;
-		end else begin
-			before_clk <= 4'd10	;
-			find_hello <= 1'b1	;
-		end
-	end
-end
-*/
 
 controller u_ctrl (
 			.o_mode			( mode			),
@@ -1731,11 +1666,11 @@ fnd_dec	u5_fnd_dec(
 		.o_seg		( hou_right	),
 		.i_num		( hou_right_num	));
 
-wire	[41:0]	six_digit_seg	;
+wire	[41:0]	six_digit_seg		;
 assign		six_digit_seg = {hou_left,hou_right,min_left,min_right,sec_left,sec_right};
 
 wire	[41:0]	real_six_digit_seg	;
-wire	[5:0]	six_dp			;    
+wire	[5:0]	six_dp			;
 
 blink	u_blink(  
 		.i_mode		( mode			),
